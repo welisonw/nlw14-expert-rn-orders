@@ -7,6 +7,8 @@ import {
 	useFonts,
 } from '@expo-google-fonts/inter';
 
+import { Loading } from '@/components/Loading';
+
 export default function Home() {
 	let [fontsLoaded] = useFonts({
 		Inter_400Regular,
@@ -14,6 +16,8 @@ export default function Home() {
 		Inter_600SemiBold,
 		Inter_700Bold,
 	});
+
+  if (!fontsLoaded) return <Loading />
 
 	return (
 		<View className='flex-1'>
