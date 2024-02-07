@@ -1,4 +1,6 @@
-import { FlatList, Text, View } from 'react-native';
+import { useRef, useState } from 'react';
+import { FlatList, SectionList, Text, View } from 'react-native';
+import { Link } from 'expo-router';
 import {
 	Inter_400Regular,
 	Inter_500Medium,
@@ -7,15 +9,17 @@ import {
 	useFonts,
 } from '@expo-google-fonts/inter';
 
-import { CATEGORIES } from '@/utils/data/products';
+import { CATEGORIES, MENU } from '@/utils/data/products';
 
 import { Loading } from '@/components/Loading';
 import { Header } from '@/components/Header';
 import { CategoryButton } from '@/components/CategoryButton';
-import { useState } from 'react';
+import { Product } from '@/components/Product';
 
 export default function Home() {
 	const [categorySelected, setCategorySelected] = useState(CATEGORIES[0]);
+
+	const sectionListRef = useRef<SectionList>(null);
 
 	let [fontsLoaded] = useFonts({
 		Inter_400Regular,
@@ -27,7 +31,19 @@ export default function Home() {
 	if (!fontsLoaded) return <Loading />;
 
 	function handleCategorySelect(selectedCategory: string) {
+		const sectionIndex = CATEGORIES.findIndex(
+			category => category === selectedCategory
+		);
+
 		setCategorySelected(selectedCategory);
+
+		if (sectionListRef.current) {
+			sectionListRef.current.scrollToLocation({
+				itemIndex: 0,
+				sectionIndex,
+				animated: true,
+			});
+		}
 	}
 
 	return (
@@ -51,6 +67,27 @@ export default function Home() {
 					paddingHorizontal: 20,
 				}}
 				className='max-h-10 mt-5'
+			/>
+
+			<SectionList
+				ref={sectionListRef}
+				sections={MENU}
+				keyExtractor={item => item.id}
+				renderSectionHeader={({ section: { title } }) => (
+					<Text className='font-semibold text-xl text-white mb-3'>{title}</Text>
+				)}
+				renderItem={({ item }) => (
+					<Link href={`/product/${item.id}`} asChild>
+            <Product data={item} />
+          </Link>
+				)}
+				stickySectionHeadersEnabled={false}
+				showsVerticalScrollIndicator={false}
+				contentContainerStyle={{
+					paddingHorizontal: 20,
+					paddingBottom: 50,
+				}}
+				className='flex-1 mt-8'
 			/>
 		</View>
 	);
