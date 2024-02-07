@@ -9,6 +9,8 @@ import {
 	useFonts,
 } from '@expo-google-fonts/inter';
 
+import { useCartStore } from '@/stores/CartStore';
+
 import { CATEGORIES, MENU } from '@/utils/data/products';
 
 import { Loading } from '@/components/Loading';
@@ -16,10 +18,18 @@ import { Header } from '@/components/Header';
 import { CategoryButton } from '@/components/CategoryButton';
 import { Product } from '@/components/Product';
 
+
 export default function Home() {
 	const [categorySelected, setCategorySelected] = useState(CATEGORIES[0]);
 
+	const cartStore = useCartStore();
+
 	const sectionListRef = useRef<SectionList>(null);
+
+	const cartQuantityItems = cartStore.products.reduce(
+		(accum, curr) => accum + curr.quantity,
+		0
+	);
 
 	let [fontsLoaded] = useFonts({
 		Inter_400Regular,
@@ -48,7 +58,7 @@ export default function Home() {
 
 	return (
 		<View className='flex-1 pt-8'>
-			<Header title='Faça seu pedido' cartQuantityItems={1} />
+			<Header title='Faça seu pedido' cartQuantityItems={cartQuantityItems} />
 
 			<FlatList
 				data={CATEGORIES}
@@ -78,8 +88,8 @@ export default function Home() {
 				)}
 				renderItem={({ item }) => (
 					<Link href={`/product/${item.id}`} asChild>
-            <Product data={item} />
-          </Link>
+						<Product data={item} />
+					</Link>
 				)}
 				stickySectionHeadersEnabled={false}
 				showsVerticalScrollIndicator={false}
