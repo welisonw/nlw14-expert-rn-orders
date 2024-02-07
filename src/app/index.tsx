@@ -8,6 +8,7 @@ import {
 } from '@expo-google-fonts/inter';
 
 import { Loading } from '@/components/Loading';
+import { Header } from '@/components/Header';
 
 export default function Home() {
 	let [fontsLoaded] = useFonts({
@@ -17,11 +18,11 @@ export default function Home() {
 		Inter_700Bold,
 	});
 
-  if (!fontsLoaded) return <Loading />
+	if (!fontsLoaded) return <Loading />;
 
 	return (
-		<View className='flex-1'>
-			<Text className='text-white text-2xl'>Hello, World</Text>
+		<View className='flex-1 pt-8'>
+			<Header title='Faça seu pedido' cartQuantityItems={1} />
 		</View>
 	);
 }
