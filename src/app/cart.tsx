@@ -18,7 +18,7 @@ import { Feather } from '@expo/vector-icons';
 import { useState } from 'react';
 import { useNavigation } from 'expo-router';
 
-const PHONE_NUMBER = '551199999999'
+const PHONE_NUMBER = '551199999999';
 
 const Cart = () => {
 	const [deliveryAddress, setDeliveryAddress] = useState('');
@@ -62,7 +62,7 @@ const Cart = () => {
 
 		const supportedURL = `https://api.whatsapp.com/send?phone=${PHONE_NUMBER}&text=${message}`;
 
-    Linking.openURL(supportedURL)
+		Linking.openURL(supportedURL);
 
 		cartStore.clearCart();
 
@@ -73,26 +73,22 @@ const Cart = () => {
 		<View className='flex-1 pt-8 mx-5'>
 			<Header title='Seu carrinho' />
 
-			<KeyboardAwareScrollView>
-				<ScrollView>
-					{cartStore.products.length ? (
-						<View className='flex-1 mt-3 border-b border-slate-700'>
-							{cartStore.products.map(product => (
-								<Product
-									key={product.id}
-									data={product}
-									activeOpacity={1}
-									deleteButton={() => handleProductRemove(product)}
-								/>
-							))}
-						</View>
-					) : (
-						<View className='flex-1 items-center justify-center'>
-							<Text className='font-body text-center text-slate-400'>
-								Seu carrinho está vazio!
-							</Text>
-						</View>
-					)}
+			{cartStore.products.length ? (
+				<View className='flex-1 mt-3'>
+					<KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
+						<ScrollView>
+							<View className='border-b border-slate-700'>
+								{cartStore.products.map(product => (
+									<Product
+										key={product.id}
+										data={product}
+										activeOpacity={1}
+										deleteButton={() => handleProductRemove(product)}
+									/>
+								))}
+							</View>
+						</ScrollView>
+					</KeyboardAwareScrollView>
 
 					<View className='flex-row items-center gap-2 mb-4 pt-5'>
 						<Text className='font-subtitle text-xl text-white'>Total:</Text>
@@ -104,16 +100,24 @@ const Cart = () => {
 						placeholder='Informe o endereço de entrega com rua, número, complemento, bairro e CEP...'
 						onChangeText={setDeliveryAddress}
 					/>
-				</ScrollView>
-			</KeyboardAwareScrollView>
+				</View>
+			) : (
+				<View className='flex-1 items-center justify-center'>
+					<Text className='font-body text-center text-slate-400'>
+						Seu carrinho está vazio!
+					</Text>
+				</View>
+			)}
 
-			<View className='gap-5'>
-				<Button onPress={handleSendOrder}>
-					<ButtonText>Enviar pedido</ButtonText>
-					<ButtonIcon>
-						<Feather name='arrow-right-circle' size={20} />
-					</ButtonIcon>
-				</Button>
+			<View className='gap-5 mt-1'>
+				{cartStore.products.length && (
+					<Button onPress={handleSendOrder}>
+						<ButtonText>Enviar pedido</ButtonText>
+						<ButtonIcon>
+							<Feather name='arrow-right-circle' size={20} />
+						</ButtonIcon>
+					</Button>
+				)}
 
 				<BackMenuButton title='Voltar ao cardápio' href='/' />
 			</View>
