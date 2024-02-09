@@ -11,7 +11,7 @@ import {
 
 import { useCartStore } from '@/stores/CartStore';
 
-import { CATEGORIES, MENU } from '@/utils/data/products';
+import { CATEGORIES, MENU, ProductProps } from '@/utils/data/products';
 
 import { Loading } from '@/components/Loading';
 import { Header } from '@/components/Header';
@@ -24,7 +24,7 @@ export default function Home() {
 
 	const cartStore = useCartStore();
 
-	const sectionListRef = useRef<SectionList>(null);
+	const sectionListRef = useRef<SectionList<ProductProps>>(null);
 
 	const cartQuantityItems = cartStore.products.reduce(
 		(accum, curr) => accum + curr.quantity,
