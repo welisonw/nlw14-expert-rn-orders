@@ -1,4 +1,4 @@
-import { Alert, ScrollView, Text, View } from 'react-native';
+import { Alert, Linking, ScrollView, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import { ProductCartProps, useCartStore } from '@/stores/CartStore';
@@ -15,9 +15,17 @@ import {
 	ButtonText,
 } from '@/components/Button';
 import { Feather } from '@expo/vector-icons';
+import { useState } from 'react';
+import { useNavigation } from 'expo-router';
+
+const PHONE_NUMBER = '551199999999'
 
 const Cart = () => {
+	const [deliveryAddress, setDeliveryAddress] = useState('');
+
 	const cartStore = useCartStore();
+
+	const navigation = useNavigation();
 
 	const total = formatCurrency(
 		cartStore.products.reduce((accum, curr) => {
@@ -35,6 +43,30 @@ const Cart = () => {
 				onPress: () => cartStore.removeFromCart(product.id),
 			},
 		]);
+	}
+
+	function handleSendOrder() {
+		if (!deliveryAddress.trim()) {
+			return Alert.alert('Pedido', 'Informe os dados do endereço de entrega.');
+		}
+
+		const products = cartStore.products
+			.map(product => `\n ${product.quantity}x ${product.title}`)
+			.join('');
+
+		const message = `🍔 NOVO PEDIDO 🥤
+    \n Endereço de entrega: ${deliveryAddress}  
+    ${products}
+    \n Valor total: ${total}
+    `;
+
+		const supportedURL = `https://api.whatsapp.com/send?phone=${PHONE_NUMBER}&text=${message}`;
+
+    Linking.openURL(supportedURL)
+
+		cartStore.clearCart();
+
+		navigation.goBack();
 	}
 
 	return (
@@ -68,12 +100,15 @@ const Cart = () => {
 						<Text className='font-heading text-2xl text-lime-400'>{total}</Text>
 					</View>
 
-					<Input placeholder='Informe o endereço de entrega com rua, número, complemento, bairro e CEP...' />
+					<Input
+						placeholder='Informe o endereço de entrega com rua, número, complemento, bairro e CEP...'
+						onChangeText={setDeliveryAddress}
+					/>
 				</ScrollView>
 			</KeyboardAwareScrollView>
 
 			<View className='gap-5'>
-				<Button>
+				<Button onPress={handleSendOrder}>
 					<ButtonText>Enviar pedido</ButtonText>
 					<ButtonIcon>
 						<Feather name='arrow-right-circle' size={20} />
