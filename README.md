@@ -1,5 +1,5 @@
 <p align='center'>
-  <img alt="Icon logo" src="./src/assets/logo.png#gh-light-mode-only" width="220px" />
+  <img alt="Icon logo" src="./src/assets/logo.png" width="220px" />
 </p>
 
 ![image](./src/assets/thumbnail.png)
